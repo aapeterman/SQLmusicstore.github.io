@@ -25,7 +25,9 @@ For example, SQL code produced these results...
 
 ## Resources
 <section>
-<a href="#" class="#"><src="chinook.db" alt="" /></a>
 <ul class="actions special">
-<li><a href="#" class="button">Chinook Database</a></li>
+<li><a href="https://drive.google.com/file/d/1d2rr5Po1SYVtXrrCyHNCXu5P22iP_pif/view?usp=sharing" class="button">SQL Queries</a></li>
+</ul>
+<ul class="actions special">
+<li><a href="chinook.db" class="button">Chinook Database</a></li>
 </ul>
