@@ -1,0 +1,205 @@
+Which Genre is most popular?
+
+CREATE VIEW v1
+as
+SELECT i.billingcountry Country,
+       g.name Genre,
+       Count(g.name) Genre_Orders,
+       SUM(i.total) Total_Spent
+FROM invoice i
+JOIN invoiceline invl ON i.invoiceid = invl.invoiceid
+JOIN track t ON t.trackid = invl.TrackId
+JOIN Genre g ON g.genreid = t.genreid
+WHERE i.billingcountry LIKE 'USA'
+GROUP BY 1,
+         2
+ORDER BY 3 DESC;
+
+ANSWER: ROCK is the MOST POPULAR Genre with 845 orders generating a total of $7.7K of sales. Latin is the second most popular genre with 386 orders, and $3.4k in Sales.
+
+---
+
+2. QUESTION: HOW MANY TOP PAYING CUSTOMERS ARE THERE?
+
+CREATE VIEW v2
+as
+SELECT c.firstname||' '||c.lastname AS customer_name,c.customerid Customer_ID,
+       CASE
+           WHEN SUM(i.total)>45 THEN 'top'
+           WHEN SUM(i.total) BETWEEN 40 AND 45 THEN 'middle'
+           WHEN SUM(i.total) < 40 THEN 'bottom'
+       END AS customer_level,
+       SUM(i.total) AS total_amt
+FROM customer c 
+JOIN invoice i 
+ON c.customerid = i.CustomerId
+GROUP BY 1,2
+ORDER BY 4 DESC;
+
+ANSWER: There are 5 "top paying" customers, with Helena Holy at the top.
+
+---
+
+3. QUESTION: Which album is top-selling?
+
+SELECT a.name Artist,
+       alb.title Album,
+       g.name Genre,
+       COUNT(t.albumid) AS AlbumsPurchased
+FROM ARTIST a
+JOIN album alb ON a.artistid = alb.artistid
+JOIN track t ON alb.albumid = t.AlbumId
+JOIN invoiceline invl ON t.trackid = invl.TrackId
+JOIN Genre g ON g.genreid = t.genreid
+GROUP BY 1,
+         2,
+         3
+ORDER BY 4 DESC
+LIMIT 5;
+
+ANSWER: Minha Historia, in the Latin Genre, is the #1 selling album, purchased 27 times.
+
+---
+
+4. QUESTION: What are top-paying customers purchasing most?
+
+SELECT DISTINCT t1.customer_name AS Customer,
+                SUM(t1.overall_spent) AS Total_Amt_Spent,
+                t1.artist Favorite,
+                t1.genre Genre
+FROM
+  (SELECT g.name genre,
+          a.name artist,
+          count(a.name) TimesArtistBought,
+          c.firstname||' '||c.lastname AS customer_name,
+          SUM(i.total) Overall_Spent,
+          c.country COUNTRY
+   FROM artist a
+   JOIN album alb ON a.artistid = alb.artistid
+   JOIN track t ON alb.albumid = t.albumid
+   JOIN genre g ON g.genreid = t.genreId
+   JOIN invoiceline invl ON t.trackid = invl.TrackId
+   JOIN invoice i ON invl.invoiceid = i.InvoiceId
+   JOIN customer c ON i.customerid = c.CustomerId
+   GROUP BY 1,
+            2,
+            4,
+            6
+   ORDER BY 5 DESC)t1
+GROUP BY 1
+ORDER BY 2 DESC
+LIMIT 5;
+
+ANSWER: The "LOST TV SHOW" and Rock Artist "U2" 
+
+---
+
+5. QUESTION: Which countries account for the majoriy of sales? 
+
+SELECT i.BillingCountry Country, SUM(i.total) SUM_total, AVG(i.total) Avg_invoice, Max(i.total) Max_Invoice, Min(i.total) Min_Invoice
+FROM invoice i
+GROUP BY 1
+ORDER BY 2 Desc
+
+ANSWER: USA ($523), Canada ($303), France ($195) and Brazil ($190.1)
+
+---
+
+6. How many times was the most popular track purchased?
+
+SELECT i.invoicedate,
+		il.TrackId,
+		i.BillingCountry Country,
+		a.name Artist_Name,
+		i.total,
+		t.name Track_Title,
+		t.MediaTypeId,
+		COUNT(il.trackid) OVER (PARTITION BY i.invoicedate ORDER BY i.invoicedate) AS Tracks_Purchased
+FROM Artist a
+JOIN Album al
+ON al.artistid = a.artistid
+JOIN Track t
+ON al.albumid = t.albumid
+JOIN InvoiceLine il
+ON t.trackid = il.trackid
+JOIN invoice i
+ON il.invoiceid = i.InvoiceId
+GROUP BY 1,2,3,4,5,6,7
+HAVING MediaTypeId = 1
+ORDER BY 8 desc;
+
+ANSWER: 14x total, with multiple tracks being purchased 14x
+
+---
+
+7. Over the past 3 months, which countries are spending the most?
+
+SELECT DISTINCT t1.country, sum(t1.total_amt) total
+FROM(SELECT i.InvoiceDate Date, i.BillingCountry country, SUM(i.total) total_amt, COUNT(i.invoicedate)
+FROM invoice i
+GROUP BY 1,2
+HAVING i.InvoiceDate BETWEEN '2013-10-01' AND '2013-12-31'
+ORDER BY 4 DESC)t1
+GROUP BY 1
+ORDER BY total desc
+LIMIT 5;
+
+ANSWER: USA, Czech Republic, and Finland
+
+---
+
+8. QUESTION: What is the most recent yearly trend of sales?
+
+SELECT i.InvoiceDate Date, i.BillingCountry country, I.BillingState, I.BillingCity, SUM(i.total) total_amt
+FROM invoice i
+GROUP BY 1,2,3,4
+HAVING i.invoicedate BETWEEN '2013-01-01' AND '2013-12-31'
+ORDER BY date;
+
+SELECT i.InvoiceDate Date, i.BillingCountry country, I.BillingState, I.BillingCity, AVG(i.total) AVG_total_amt
+FROM invoice i
+GROUP BY 1,2,3,4
+HAVING i.invoicedate BETWEEN '2013-01-01' AND '2013-12-31'
+ORDER BY AVG_total_amt DESC;
+
+---
+
+9. QUESTION: Which city/state has purchased the most over the past 12 months?
+
+SELECT*
+FROM(
+SELECT i.InvoiceDate Date, i.BillingCountry country, I.BillingState, I.BillingCity, SUM(i.total) SUM_total_amt
+FROM invoice i
+GROUP BY 1,2,3,4
+HAVING i.invoicedate BETWEEN '2013-01-01' AND '2013-12-31'
+ORDER BY SUM_total_amt DESC)t1
+WHERE COUNTRY IS 'USA'
+
+ANSWER: Czech Republic
+
+---
+
+10. Over the past year, which cities in the USA represent majority of sales?
+
+SELECT*
+FROM(
+SELECT i.InvoiceDate Date, i.BillingCountry country, min(i.total) min_total_amt
+FROM invoice i
+GROUP BY 1,2
+ORDER BY min_total_amt asc)t1
+WHERE COUNTRY IS 'USA'
+ORDER BY min_total_amt 
+
+ANSWER: New York, NY and Tucson, AZ
+
+---
+
+11. QUESTION: Which months are the busiest for sales all-time?
+
+SELECT MONTH, SUM(total) sumtotal
+FROM(
+SELECT SUBSTR(i.invoicedate,1,4) AS YEAR, SUBSTR(i.invoicedate,6,2) AS Month, SUBSTR(i.invoicedate,9,2) AS "Day of Month", i.BillingCountry Country, i.total Total
+FROM Invoice i)
+GROUP BY 1
+
+ANSWER: January, June, April, and August
