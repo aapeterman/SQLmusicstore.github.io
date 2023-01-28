@@ -15,7 +15,7 @@ SQL Questions to Analyze:
 The end product is a SQL file that can drill down the data and give the user detailed information. 
 
 For example, SQL code produced these results...
-- ROCK is the most popular Genre generating a total of $7.7K of sales. Latin is the second most popular genre at $3.4k in Sales.
+- "Rock" is the most popular Genre generating a total of $7.7K of sales. Latin is the second most popular genre at $3.4k in Sales.
 - The #1 album sold is in the Latin Genre
 - The most popular items to top-paying customers are the “Lost” TV show and Rock Artist “U2.”
 - USA, Canada, France, and Brazil are top paying countries, with Poland, Hungary, and Austria the least.
