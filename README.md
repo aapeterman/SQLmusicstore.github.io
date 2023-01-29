@@ -26,7 +26,7 @@ For example, SQL produced these results...
 ## Resources
 <section>
 <ul class="actions special">
-<li><a href="https://drive.google.com/file/d/17MYvwooCa8tsISAqY7q0k5rKo-XSTxgH/view?usp=sharing" class="button">SQL Queries</a></li>
+<li><a href="https://github.com/aapeterman/sql-music-store/blob/main/SQL%20queries_music.txt" class="button">SQL Queries</a></li>
 </ul>
 <ul class="actions special">
 <li><a href="https://github.com/aapeterman/sql-music-store/blob/main/sql_musicstore.xlsx" class="button">Tables (from queried results)</a></li>
