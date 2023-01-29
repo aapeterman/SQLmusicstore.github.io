@@ -14,7 +14,7 @@ SQL Questions to Analyze:
 ## Use cases
 The end product is a SQL file that can drill down the data and give the user detailed information. 
 
-For example, SQL code produced these results...
+For example, SQL produced these results...
 - "Rock" is the most popular Genre generating a total of $7.7K of sales. Latin is the second most popular genre at $3.4k in Sales.
 - The #1 album sold is in the Latin Genre
 - The “Lost” TV show and music by “U2" are favorites of top-paying customers.
@@ -27,6 +27,9 @@ For example, SQL code produced these results...
 <section>
 <ul class="actions special">
 <li><a href="https://drive.google.com/file/d/17MYvwooCa8tsISAqY7q0k5rKo-XSTxgH/view?usp=sharing" class="button">SQL Queries</a></li>
+</ul>
+<ul class="actions special">
+<li><a href="https://github.com/aapeterman/sql-music-store/blob/main/sql_musicstore.xlsx" class="button">Tables (from queried results)</a></li>
 </ul>
 <ul class="actions special">
 <li><a href="chinook.db" class="button">Chinook Database</a></li>
